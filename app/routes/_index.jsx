@@ -4,7 +4,7 @@ import {Suspense, useEffect, useState} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import { RiHeartFill } from "@remixicon/react";
 import { handleLikeClick } from '~/lib/utils'
-
+import BaseService from '~/lib/baseService';
 /**
  * @type {MetaFunction}
  */
@@ -69,7 +69,20 @@ function RecommendedProducts({products}) {
   useEffect(() => {
     const likedProducts = JSON.parse(sessionStorage.getItem('likedProducts')) || [];
     setLikedProducts(likedProducts);
+    sendLikedProducts(likedProducts);
   }, [])
+
+  const sendLikedProducts = async () => {
+    for (const product of likedProducts) {
+      try {
+        const response = await BaseService.addFavorite(userID, product); // Ajusta el userID según tu lógica
+        console.log('Producto enviado:', product);
+        console.log('Respuesta del servidor:', response);
+      } catch (error) {
+        console.error('Error al enviar producto:', error);
+      }
+    }
+  };
   return (
     <div className="recommended-products">
       <h2>Recommended Products</h2>
