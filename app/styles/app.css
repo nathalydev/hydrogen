@@ -338,6 +338,24 @@ aside li {
   height: auto;
 }
 
+.button-like {
+ float: inline-end;
+ stroke: red;
+ color: #fff;
+ cursor: pointer;
+}
+
+.button-like .active {
+  float: inline-end;
+  stroke: red;
+  color: red;
+  cursor: pointer;
+ }
+
+.button-like:hover {
+  color: red;
+}
+
 /*
 * --------------------------------------------------
 * routes/collections._index.tsx

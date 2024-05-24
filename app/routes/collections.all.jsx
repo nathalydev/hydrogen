@@ -6,7 +6,11 @@ import {
   Image,
   Money,
 } from '@shopify/hydrogen';
+import { RiHeartFill } from '@remixicon/react';
+import { handleLikeClick } from '~/lib/utils'
 import {useVariantUrl} from '~/lib/variants';
+import { useEffect, useState} from 'react';
+
 
 /**
  * @type {MetaFunction<typeof loader>}
@@ -37,7 +41,7 @@ export default function Collection() {
 
   return (
     <div className="collection">
-      <h1>Products</h1>
+      <h1>Products</h1>  
       <Pagination connection={products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <>
@@ -55,6 +59,7 @@ export default function Collection() {
     </div>
   );
 }
+
 
 /**
  * @param {{products: ProductItemFragment[]}}
@@ -84,27 +89,44 @@ function ProductsGrid({products}) {
 function ProductItem({product, loading}) {
   const variant = product.variants.nodes[0];
   const variantUrl = useVariantUrl(product.handle, variant.selectedOptions);
+  const [likedProducts, setLikedProducts] = useState([]);
+
+  useEffect(() => {
+    const likedProducts = JSON.parse(sessionStorage.getItem('likedProducts')) || [];
+    setLikedProducts(likedProducts);
+  }, [])
   return (
-    <Link
-      className="product-item"
-      key={product.id}
-      prefetch="intent"
-      to={variantUrl}
-    >
-      {product.featuredImage && (
-        <Image
-          alt={product.featuredImage.altText || product.title}
-          aspectRatio="1/1"
-          data={product.featuredImage}
-          loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
-    </Link>
+    <div key={product.id}>
+      <RiHeartFill
+        size={36}
+        color={likedProducts.find(item => item.id === product.id) ? 'red' : 'white'}
+        className="button-like"
+        onClick={() => {
+          const updated = handleLikeClick(product);
+          setLikedProducts(updated);
+        }}
+                />
+      <Link
+        className="product-item"
+        key={product.id}
+        prefetch="intent"
+        to={variantUrl}
+      >
+        {product.featuredImage && (
+          <Image
+            alt={product.featuredImage.altText || product.title}
+            aspectRatio="1/1"
+            data={product.featuredImage}
+            loading={loading}
+            sizes="(min-width: 45em) 400px, 100vw"
+          />
+        )}
+        <h4>{product.title}</h4>
+        <small>
+          <Money data={product.priceRange.minVariantPrice} />
+        </small>
+      </Link>
+    </div>
   );
 }
 

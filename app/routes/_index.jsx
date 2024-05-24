@@ -1,7 +1,9 @@
 import {defer} from '@shopify/remix-oxygen';
 import {Await, useLoaderData, Link} from '@remix-run/react';
-import {Suspense} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
+import { RiHeartFill } from "@remixicon/react";
+import { handleLikeClick } from '~/lib/utils'
 
 /**
  * @type {MetaFunction}
@@ -62,6 +64,12 @@ function FeaturedCollection({collection}) {
  * }}
  */
 function RecommendedProducts({products}) {
+  const [likedProducts, setLikedProducts] = useState([]);
+
+  useEffect(() => {
+    const likedProducts = JSON.parse(sessionStorage.getItem('likedProducts')) || [];
+    setLikedProducts(likedProducts);
+  }, [])
   return (
     <div className="recommended-products">
       <h2>Recommended Products</h2>
@@ -69,22 +77,34 @@ function RecommendedProducts({products}) {
         <Await resolve={products}>
           {({products}) => (
             <div className="recommended-products-grid">
-              {products.nodes.map((product) => (
+              {products.nodes.map((product) => ( 
+                <div key={product.id}>
+                  
+               <RiHeartFill
+                  size={36}
+                  color={likedProducts.find(item => item.id === product.id) ? 'red' : 'white'}
+                  className="button-like"
+                  onClick={() => {
+                    const updated = handleLikeClick(product);
+                    setLikedProducts(updated);
+                  }}
+                />
                 <Link
-                  key={product.id}
-                  className="recommended-product"
-                  to={`/products/${product.handle}`}
-                >
-                  <Image
-                    data={product.images.nodes[0]}
-                    aspectRatio="1/1"
-                    sizes="(min-width: 45em) 20vw, 50vw"
-                  />
-                  <h4>{product.title}</h4>
-                  <small>
-                    <Money data={product.priceRange.minVariantPrice} />
-                  </small>
-                </Link>
+                    key={product.id}
+                    className="recommended-product"
+                    to={`/products/${product.handle}`}
+                  >
+                    <Image
+                      data={product.images.nodes[0]}
+                      aspectRatio="1/1"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                    <h4>{product.title}</h4>
+                    <small>
+                      <Money data={product.priceRange.minVariantPrice} />
+                    </small>
+                  </Link>
+                </div>
               ))}
             </div>
           )}

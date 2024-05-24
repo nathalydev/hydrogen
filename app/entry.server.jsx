@@ -15,7 +15,15 @@ export default async function handleRequest(
   responseHeaders,
   remixContext,
 ) {
-  const {nonce, header, NonceProvider} = createContentSecurityPolicy();
+
+  const connect = createContentSecurityPolicy({
+    connectSrc: [
+      // (ie. 'wss://<your-ngrok-domain>.app:*')
+      'wss://https://edab-155-94-250-89.ngrok-free.app:*',
+    ],
+  });
+  const {nonce, header, NonceProvider} = connect
+  
 
   const body = await renderToReadableStream(
     <NonceProvider>

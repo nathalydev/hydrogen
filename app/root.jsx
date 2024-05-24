@@ -14,6 +14,8 @@ import favicon from './assets/favicon.svg';
 import resetStyles from './styles/reset.css?url';
 import appStyles from './styles/app.css?url';
 import {Layout} from '~/components/Layout';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -106,6 +108,7 @@ export default function App() {
       </head>
       <body>
         <Layout {...data}>
+          <ToastContainer />
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
