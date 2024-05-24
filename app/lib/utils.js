@@ -1,21 +1,21 @@
 import { toast } from 'react-toastify';
 
 export const handleLikeClick = (product) => {
-    // Recuperar la lista actual de productos favoritos del sessionStorage
+    // Recover actual list of fav products from sessionStorage
     let likedProducts = JSON.parse(sessionStorage.getItem('likedProducts')) || [];
     const existingProductIndex = likedProducts.findIndex(likedProduct => likedProduct.id === product.id);
     let exist = false;
     if (existingProductIndex !== -1) {
-        // El producto ya está en la lista, removerlo
-        likedProducts.splice(existingProductIndex, 1); // Eliminar el producto de la lista
+        // If the product is already on the list, remove it.
+        likedProducts.splice(existingProductIndex, 1); // Remove the product from the fav list
         toast.success('Product is removed from favorites!');
     } else {
-        // El producto no está en la lista, agregarlo
+        // If the product is not on the list, remove it.
         likedProducts.push(product);
         toast.success('Product is added to favorites!');
     }
 
-    // Guardar la lista actualizada en el sessionStorage
+    // Save update list on sessionStorage
     sessionStorage.setItem('likedProducts', JSON.stringify(likedProducts));
     return likedProducts;
 };
