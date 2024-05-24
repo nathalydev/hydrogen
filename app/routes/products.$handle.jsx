@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import {defer, redirect} from '@shopify/remix-oxygen';
 import {Await, Link, useLoaderData} from '@remix-run/react';
 import {
@@ -9,7 +9,8 @@ import {
   CartForm,
 } from '@shopify/hydrogen';
 import {getVariantUrl} from '~/lib/variants';
-
+import { RiHeartFill } from '@remixicon/react';
+import { handleLikeClick } from '~/lib/utils'
 /**
  * @type {MetaFunction<typeof loader>}
  */
@@ -95,7 +96,7 @@ export default function Product() {
   const {selectedVariant} = product;
   return (
     <div className="product">
-      <ProductImage image={selectedVariant?.image} />
+      <ProductImage image={selectedVariant?.image} product={product} />
       <ProductMain
         selectedVariant={selectedVariant}
         product={product}
@@ -108,12 +109,28 @@ export default function Product() {
 /**
  * @param {{image: ProductVariantFragment['image']}}
  */
-function ProductImage({image}) {
+function ProductImage({image, product}) {
+  const [likedProducts, setLikedProducts] = useState([]);
+
+  useEffect(() => {
+    const likedProducts = JSON.parse(sessionStorage.getItem('likedProducts')) || [];
+    setLikedProducts(likedProducts);
+  }, [])
   if (!image) {
     return <div className="product-image" />;
   }
+  
   return (
     <div className="product-image">
+      <RiHeartFill
+        size={36}
+        color={likedProducts.find(item => item.id === product.id) ? 'red' : 'white'}
+        className="button-like"
+        onClick={() => {
+          const updated = handleLikeClick(product);
+          setLikedProducts(updated);
+        }}
+                />
       <Image
         alt={image.altText || 'Product Image'}
         aspectRatio="1/1"
