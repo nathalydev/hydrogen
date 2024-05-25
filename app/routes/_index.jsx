@@ -75,11 +75,11 @@ function RecommendedProducts({products}) {
   const sendLikedProducts = async () => {
     for (const product of likedProducts) {
       try {
-        const response = await BaseService.addFavorite(userID, product); // Ajusta el userID según tu lógica
-        console.log('Producto enviado:', product);
-        console.log('Respuesta del servidor:', response);
+        const response = await BaseService.addFavorite(userID, product); // Adjust userID according to your logic
+        console.log('Product sent:', product);
+        console.log('Answer from server:', response);
       } catch (error) {
-        console.error('Error al enviar producto:', error);
+        console.error('Error when sending the product:', error);
       }
     }
   };
